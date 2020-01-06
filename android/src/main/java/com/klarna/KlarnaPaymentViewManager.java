@@ -94,6 +94,8 @@ public class KlarnaPaymentViewManager extends SimpleViewManager<PaymentViewWrapp
      */
     @Override
     public void receiveCommand(@Nonnull PaymentViewWrapper root, int commandId, @Nullable ReadableArray args) {
+        String sessionData = null;
+
         switch (commandId) {
             case COMMAND_INITIALIZE:
                 if (args != null) {
@@ -107,7 +109,10 @@ public class KlarnaPaymentViewManager extends SimpleViewManager<PaymentViewWrapp
                 break;
 
             case COMMAND_LOAD:
-                root.paymentView.load(null);
+                if (args != null) {
+                    sessionData = args.getString(0);
+                }
+                root.paymentView.load(sessionData);
                 break;
 
             case COMMAND_LOAD_PAYMENT_REVIEW:
@@ -117,16 +122,24 @@ public class KlarnaPaymentViewManager extends SimpleViewManager<PaymentViewWrapp
             case COMMAND_AUTHORIZE:
                 if (args != null) {
                     final boolean autoFinalize = args.getBoolean(0);
-                    root.paymentView.authorize(autoFinalize, null);
+                    sessionData = args.getString(1);
+
+                    root.paymentView.authorize(autoFinalize, sessionData);                
                 }
                 break;
 
             case COMMAND_REAUTHORIZE:
-                root.paymentView.reauthorize(null);
+                if (args != null) {
+                    sessionData = args.getString(0);
+                }
+                root.paymentView.reauthorize(sessionData);
                 break;
 
             case COMMAND_FINALIZE:
-                root.paymentView.finalize(null);
+                if (args != null) {
+                    sessionData = args.getString(0);
+                }
+                root.paymentView.finalize(sessionData);
                 break;
         }
     }
